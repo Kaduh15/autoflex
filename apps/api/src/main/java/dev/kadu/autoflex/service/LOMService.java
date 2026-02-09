@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import dev.kadu.autoflex.dto.product.AddItemsInProduct;
+import dev.kadu.autoflex.dto.lom.LomItemRequest;
 import dev.kadu.autoflex.model.LOM;
+import dev.kadu.autoflex.model.Product;
 import dev.kadu.autoflex.repository.ProductRawMaterialRepository;
 
 @Service
@@ -28,9 +29,9 @@ public class LOMService {
         .toList();
   }
 
-  public List<LOM> addItemsInProduct(List<AddItemsInProduct> data) {
+  public List<LOM> addItemsInProduct(Long productId, List<LomItemRequest> data) {
+    Product product = productService.getById(productId);
     List<LOM> lomList = data.stream().map(item -> {
-      var product = productService.getById(item.productId());
       var rawMaterial = rawMaterialService.getById(item.rawMaterialId());
       return new LOM(product, rawMaterial, item.quantity());
     }).toList();

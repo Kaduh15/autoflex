@@ -9,17 +9,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.kadu.autoflex.dto.product.AddItemsInProduct;
+import dev.kadu.autoflex.dto.common.ApiResult;
+import dev.kadu.autoflex.dto.lom.LomItemRequest;
+import dev.kadu.autoflex.dto.lom.LomMaterialItemResponse;
+import dev.kadu.autoflex.dto.lom.LomResponse;
+import dev.kadu.autoflex.dto.rawmaterial.RawMaterialResponse;
 import dev.kadu.autoflex.model.LOM;
 import dev.kadu.autoflex.model.Product;
 import dev.kadu.autoflex.service.LOMService;
 import dev.kadu.autoflex.service.ProductService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping()
@@ -40,16 +47,18 @@ public class LOMController {
       @ApiResponse(responseCode = "200", description = "LOM do produto retornada com sucesso"),
       @ApiResponse(responseCode = "404", description = "Produto ou LOM não encontrado")
   })
-  public List<LOM> getLOMByProductId(@Parameter(description = "ID do produto") @PathVariable String id) {
-    Product product = this.productService.getById(Long.parseLong(id));
-    if (product == null) {
-      return null;
-    }
-
-    return this.lomService.getLOMByProduct(product.getId()).stream().map(lom -> {
-      lom.setProduct(null);
-      return lom;
-    }).toList();
+  public ResponseEntity<ApiResult<LomResponse>> getLOMByProductId(
+      @Parameter(description = "ID do produto") @PathVariable Long id) {
+    Product product = this.productService.getById(id);
+    List<LomMaterialItemResponse> materials = this.lomService.getLOMByProduct(product.getId()).stream()
+        .map(lom -> {
+          var raw = lom.getRawMaterial();
+          return new LomMaterialItemResponse(
+              new RawMaterialResponse(raw.getId(), raw.getCode(), raw.getName(), raw.getStockQuantity()),
+              lom.getQuantityRequired());
+        })
+        .toList();
+    return ResponseEntity.ok(new ApiResult<>("OK", new LomResponse(product, materials)));
   }
 
   @PostMapping("products/{id}/lom/items")
@@ -59,8 +68,11 @@ public class LOMController {
       @ApiResponse(responseCode = "400", description = "Dados inválidos"),
       @ApiResponse(responseCode = "404", description = "Produto não encontrado")
   })
-  public List<LOM> addItemsInProduct(@RequestBody List<AddItemsInProduct> entity) {
-    return this.lomService.addItemsInProduct(entity);
+  public ResponseEntity<ApiResult<List<LOM>>> addItemsInProduct(
+      @PathVariable Long id,
+      @Valid @RequestBody List<LomItemRequest> entity) {
+    List<LOM> lomList = this.lomService.addItemsInProduct(id, entity);
+    return ResponseEntity.ok(new ApiResult<>("OK", lomList));
   }
 
   @DeleteMapping("products/{id}/lom/items/{rawMaterialId}")
@@ -69,7 +81,8 @@ public class LOMController {
       @ApiResponse(responseCode = "204", description = "Item excluído da LOM do produto com sucesso"),
       @ApiResponse(responseCode = "404", description = "Produto ou item da LOM não encontrado")
   })
-  public void deleteItemsInProduct(@PathVariable String id, @PathVariable String rawMaterialId) {
-    this.lomService.deleteLOMByProductId(Long.parseLong(id), Long.parseLong(rawMaterialId));
+  public ResponseEntity<Void> deleteItemsInProduct(@PathVariable Long id, @PathVariable Long rawMaterialId) {
+    this.lomService.deleteLOMByProductId(id, rawMaterialId);
+    return ResponseEntity.noContent().build();
   }
 }
