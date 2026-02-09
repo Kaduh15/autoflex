@@ -2,8 +2,10 @@ package dev.kadu.autoflex.service;
 
 import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import dev.kadu.autoflex.exception.NotFoundException;
 import dev.kadu.autoflex.model.RawMaterial;
 import dev.kadu.autoflex.repository.RawMaterialRepository;
 
@@ -21,7 +23,7 @@ public class RawMaterialService {
   }
 
   public RawMaterial getById(long long1) {
-    return rawMaterialRepository.findById(long1).orElse(null);
+    return rawMaterialRepository.findById(long1).orElseThrow(() -> new NotFoundException("Matéria-prima não encontrada"));
   }
 
   public RawMaterial create(RawMaterial entity) {
@@ -34,11 +36,15 @@ public class RawMaterialService {
       entity.setName(updatedEntity.getName());
       entity.setStockQuantity(updatedEntity.getStockQuantity());
       return rawMaterialRepository.save(entity);
-    }).orElse(null);
+    }).orElseThrow(() -> new NotFoundException("Matéria-prima não encontrada"));
   }
 
   public void delete(Long id) {
-    rawMaterialRepository.deleteById(id);
+    try {
+      rawMaterialRepository.deleteById(id);
+    } catch (EmptyResultDataAccessException | IllegalArgumentException ex) {
+      throw new NotFoundException("Matéria-prima não encontrada");
+    }
   }
 
 }

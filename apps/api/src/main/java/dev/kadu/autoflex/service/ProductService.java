@@ -2,8 +2,10 @@ package dev.kadu.autoflex.service;
 
 import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import dev.kadu.autoflex.exception.NotFoundException;
 import dev.kadu.autoflex.model.Product;
 import dev.kadu.autoflex.repository.ProductRepository;
 
@@ -17,11 +19,15 @@ public class ProductService {
   }
 
   public List<Product> getAll() {
+    if (productRepository.count() == 0) {
+      return List.of();
+    }
+
     return productRepository.findAll();
   }
 
   public Product getById(Long id) {
-    return productRepository.findById(id).orElse(null);
+    return productRepository.findById(id).orElseThrow(() -> new NotFoundException("Produto não encontrado"));
   }
 
   public Product create(Product product) {
@@ -34,10 +40,14 @@ public class ProductService {
       product.setName(updatedProduct.getName());
       product.setPrice(updatedProduct.getPrice());
       return productRepository.save(product);
-    }).orElse(null);
+    }).orElseThrow(() -> new NotFoundException("Produto não encontrado"));
   }
 
   public void delete(Long id) {
-    productRepository.deleteById(id);
+    try {
+      productRepository.deleteById(id);
+    } catch (EmptyResultDataAccessException | IllegalArgumentException ex) {
+      throw new NotFoundException("Produto não encontrado");
+    }
   }
 }
