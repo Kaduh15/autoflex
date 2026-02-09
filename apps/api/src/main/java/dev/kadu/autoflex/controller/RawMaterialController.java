@@ -5,18 +5,23 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.kadu.autoflex.dto.common.ApiResult;
+import dev.kadu.autoflex.dto.rawmaterial.RawMaterialRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import dev.kadu.autoflex.model.RawMaterial;
 import dev.kadu.autoflex.service.RawMaterialService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,8 +41,8 @@ public class RawMaterialController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Lista de matérias-primas retornada com sucesso")
   })
-  public List<RawMaterial> getAll() {
-    return rawMaterialService.getAll();
+  public ResponseEntity<ApiResult<List<RawMaterial>>> getAll() {
+    return ResponseEntity.ok(new ApiResult<>("OK", rawMaterialService.getAll()));
   }
 
   @GetMapping("{id}")
@@ -46,8 +51,9 @@ public class RawMaterialController {
       @ApiResponse(responseCode = "200", description = "Matéria-prima encontrada com sucesso"),
       @ApiResponse(responseCode = "404", description = "Matéria-prima não encontrada")
   })
-  public RawMaterial getById(@Parameter(description = "ID da matéria-prima") @PathVariable String id) {
-    return this.rawMaterialService.getById(Long.parseLong(id));
+  public ResponseEntity<ApiResult<RawMaterial>> getById(
+      @Parameter(description = "ID da matéria-prima") @PathVariable Long id) {
+    return ResponseEntity.ok(new ApiResult<>("OK", this.rawMaterialService.getById(id)));
   }
 
   @PostMapping()
@@ -56,8 +62,10 @@ public class RawMaterialController {
       @ApiResponse(responseCode = "201", description = "Matéria-prima criada com sucesso"),
       @ApiResponse(responseCode = "400", description = "Dados inválidos")
   })
-  public RawMaterial create(@RequestBody RawMaterial entity) {
-    return this.rawMaterialService.create(entity);
+  public ResponseEntity<ApiResult<RawMaterial>> create(@Valid @RequestBody RawMaterialRequest request) {
+    RawMaterial created = this.rawMaterialService
+        .create(new RawMaterial(request.code(), request.name(), request.stockQuantity()));
+    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResult<>("Criado com sucesso", created));
   }
 
   @PutMapping("{id}")
@@ -67,9 +75,12 @@ public class RawMaterialController {
       @ApiResponse(responseCode = "400", description = "Dados inválidos"),
       @ApiResponse(responseCode = "404", description = "Matéria-prima não encontrada")
   })
-  public RawMaterial update(@Parameter(description = "ID da matéria-prima a ser atualizada") @PathVariable String id,
-      @RequestBody RawMaterial entity) {
-    return this.rawMaterialService.update(Long.parseLong(id), entity);
+  public ResponseEntity<ApiResult<RawMaterial>> update(
+      @Parameter(description = "ID da matéria-prima a ser atualizada") @PathVariable Long id,
+      @Valid @RequestBody RawMaterialRequest request) {
+    RawMaterial updated = this.rawMaterialService
+        .update(id, new RawMaterial(request.code(), request.name(), request.stockQuantity()));
+    return ResponseEntity.ok(new ApiResult<>("Atualizado com sucesso", updated));
   }
 
   @DeleteMapping("{id}")
@@ -78,7 +89,8 @@ public class RawMaterialController {
       @ApiResponse(responseCode = "204", description = "Matéria-prima excluída com sucesso"),
       @ApiResponse(responseCode = "404", description = "Matéria-prima não encontrada")
   })
-  public void delete(@Parameter(description = "ID da matéria-prima a ser excluída") @PathVariable String id) {
-    this.rawMaterialService.delete(Long.parseLong(id));
+  public ResponseEntity<Void> delete(@Parameter(description = "ID da matéria-prima a ser excluída") @PathVariable Long id) {
+    this.rawMaterialService.delete(id);
+    return ResponseEntity.noContent().build();
   }
 }

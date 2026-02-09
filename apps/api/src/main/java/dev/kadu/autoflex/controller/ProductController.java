@@ -5,9 +5,13 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.kadu.autoflex.dto.common.ApiResult;
+import dev.kadu.autoflex.dto.product.ProductRequest;
 import dev.kadu.autoflex.model.Product;
 import dev.kadu.autoflex.service.ProductService;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PutMapping;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("products")
@@ -36,8 +41,8 @@ public class ProductController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Lista de produtos retornada com sucesso")
   })
-  public List<Product> getAll() {
-    return productService.getAll();
+  public ResponseEntity<ApiResult<List<Product>>> getAll() {
+    return ResponseEntity.ok(new ApiResult<>("OK", productService.getAll()));
   }
 
   @GetMapping("{id}")
@@ -46,8 +51,8 @@ public class ProductController {
       @ApiResponse(responseCode = "200", description = "Produto encontrado com sucesso"),
       @ApiResponse(responseCode = "404", description = "Produto não encontrado")
   })
-  public Product getById(@Parameter(description = "ID do produto") @PathVariable String id) {
-    return this.productService.getById(Long.parseLong(id));
+  public ResponseEntity<ApiResult<Product>> getById(@Parameter(description = "ID do produto") @PathVariable Long id) {
+    return ResponseEntity.ok(new ApiResult<>("OK", this.productService.getById(id)));
   }
 
   @PostMapping()
@@ -56,8 +61,10 @@ public class ProductController {
       @ApiResponse(responseCode = "201", description = "Produto criado com sucesso"),
       @ApiResponse(responseCode = "400", description = "Dados inválidos")
   })
-  public Product create(@Parameter(description = "Dados do produto a ser criado") @RequestBody Product entity) {
-    return this.productService.create(entity);
+  public ResponseEntity<ApiResult<Product>> create(
+      @Parameter(description = "Dados do produto a ser criado") @Valid @RequestBody ProductRequest request) {
+    Product created = this.productService.create(new Product(request.code(), request.name(), request.price()));
+    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResult<>("Criado com sucesso", created));
   }
 
   @PutMapping("{id}")
@@ -67,8 +74,9 @@ public class ProductController {
       @ApiResponse(responseCode = "400", description = "Dados inválidos"),
       @ApiResponse(responseCode = "404", description = "Produto não encontrado")
   })
-  public Product update(@PathVariable String id, @RequestBody Product entity) {
-    return this.productService.update(Long.parseLong(id), entity);
+  public ResponseEntity<ApiResult<Product>> update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
+    Product updated = this.productService.update(id, new Product(request.code(), request.name(), request.price()));
+    return ResponseEntity.ok(new ApiResult<>("Atualizado com sucesso", updated));
   }
 
   @DeleteMapping("{id}")
@@ -77,7 +85,8 @@ public class ProductController {
       @ApiResponse(responseCode = "204", description = "Produto excluído com sucesso"),
       @ApiResponse(responseCode = "404", description = "Produto não encontrado")
   })
-  public void delete(@Parameter(description = "ID do produto a ser excluído") @PathVariable String id) {
-    this.productService.delete(Long.parseLong(id));
+  public ResponseEntity<Void> delete(@Parameter(description = "ID do produto a ser excluído") @PathVariable Long id) {
+    this.productService.delete(id);
+    return ResponseEntity.noContent().build();
   }
 }
