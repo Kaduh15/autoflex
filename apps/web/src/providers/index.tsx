@@ -1,5 +1,5 @@
-import { QueryProvider } from './query/query-provider'
-import { ThemeProvider } from './theme/theme-provider'
+import { QueryProvider } from "./query/query-provider";
+import { ThemeProvider } from "./theme/theme-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,5 +13,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
       </ThemeProvider>
     </QueryProvider>
-  )
+  );
 }
