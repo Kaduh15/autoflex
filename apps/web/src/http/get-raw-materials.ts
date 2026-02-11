@@ -9,7 +9,7 @@ const responseSchema = z.object({
 })
 
 export async function getRawMaterials() {
-  const response = await fetch(`${env.API_URL}/raw-materials`)
+  const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/raw-materials`)
 
   if (!response.ok) {
     throw new Error('Falha ao buscar matérias-primas')

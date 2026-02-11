@@ -20,7 +20,7 @@ const responseSchema = z.object({
 })
 
 export async function getProducts() {
-  const res = await fetch(`${env.API_URL}/products`)
+  const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/products`)
 
   if (!res.ok) {
     throw new Error('Erro ao buscar produtos')
