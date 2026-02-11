@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { BoxIcon } from 'lucide-react'
 import { ModeToggle } from './toggle-theme'
 
@@ -13,14 +14,14 @@ export function Header() {
       <nav className="ml-auto">
         <ul className="flex items-center gap-4">
           <li>
-            <a href="/">Incio</a>
+            <Link href="/">Incio</Link>
           </li>
           <li>
-            <a href="/products">Produtos</a>
+            <Link href="/products">Produtos</Link>
           </li>
 
           <li>
-            <a href="/raw-materials">Materia Prima</a>
+            <Link href="/raw-materials">Materia Prima</Link>
           </li>
         </ul>
       </nav>
