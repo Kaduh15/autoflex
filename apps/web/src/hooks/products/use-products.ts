@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
 
-import { getProducts } from "@/http/get-products";
+import { getProducts } from '@/http/get-products'
 
 export function useProducts() {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: ['products'],
     queryFn: getProducts,
-  });
+  })
 }

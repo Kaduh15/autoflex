@@ -1,42 +1,42 @@
-"use client";
+'use client'
 
-import { PlusIcon } from "lucide-react";
-import { Activity, useMemo, useState } from "react";
-import { ListingEmptyState } from "@/components/listing/listing-empty-state";
-import { ListingHeader } from "@/components/listing/listing-header";
-import { ListingPageLayout } from "@/components/listing/listing-layout";
-import { ListingTable } from "@/components/listing/listing-table";
-import { ListingToolbar } from "@/components/listing/listing-toolbar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useProducts } from "@/hooks/products/use-products";
-import { formatCurrency } from "@/utils/format-currency";
+import { PlusIcon } from 'lucide-react'
+import { Activity, useMemo, useState } from 'react'
+import { ListingEmptyState } from '@/components/listing/listing-empty-state'
+import { ListingHeader } from '@/components/listing/listing-header'
+import { ListingPageLayout } from '@/components/listing/listing-layout'
+import { ListingTable } from '@/components/listing/listing-table'
+import { ListingToolbar } from '@/components/listing/listing-toolbar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { useProducts } from '@/hooks/products/use-products'
+import { formatCurrency } from '@/utils/format-currency'
 
 export default function ProductsPage() {
-  const [search, setSearch] = useState("");
-  const productsQuery = useProducts();
-  const data = productsQuery.data?.data ?? [];
+  const [search, setSearch] = useState('')
+  const productsQuery = useProducts()
+  const data = productsQuery.data?.data ?? []
   const columns = [
-    { key: "code", label: "Código" },
-    { key: "name", label: "Nome" },
-    { key: "price", label: "Valor" },
-    { key: "rawMaterial", label: "Matéria-prima" },
-    { key: "actions", label: "Ações", align: "end" as const },
-  ];
+    { key: 'code', label: 'Código' },
+    { key: 'name', label: 'Nome' },
+    { key: 'price', label: 'Valor' },
+    { key: 'rawMaterial', label: 'Matéria-prima' },
+    { key: 'actions', label: 'Ações', align: 'end' as const },
+  ]
 
   const filteredData = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+    const normalizedSearch = search.trim().toLowerCase()
     if (!normalizedSearch) {
-      return data;
+      return data
     }
 
     return data.filter((product) => {
       return (
         product.code.toLowerCase().includes(normalizedSearch) ||
         product.name.toLowerCase().includes(normalizedSearch)
-      );
-    });
-  }, [data, search]);
+      )
+    })
+  }, [data, search])
 
   return (
     <ListingPageLayout>
@@ -62,8 +62,8 @@ export default function ProductsPage() {
         <Activity
           mode={
             filteredData.length > 0 && !productsQuery.isLoading
-              ? "visible"
-              : "hidden"
+              ? 'visible'
+              : 'hidden'
           }
         >
           <ListingTable
@@ -71,27 +71,27 @@ export default function ProductsPage() {
             rows={filteredData}
             getRowKey={(row) => row.id}
             renderCell={(row, columnKey) => {
-              if (columnKey === "code") {
-                return <span className="font-medium">{row.code}</span>;
+              if (columnKey === 'code') {
+                return <span className="font-medium">{row.code}</span>
               }
 
-              if (columnKey === "name") {
-                return row.name;
+              if (columnKey === 'name') {
+                return row.name
               }
 
-              if (columnKey === "price") {
-                return formatCurrency(row.price);
+              if (columnKey === 'price') {
+                return formatCurrency(row.price)
               }
 
-              if (columnKey === "rawMaterial") {
+              if (columnKey === 'rawMaterial') {
                 return (
                   <Badge className="text-accent font-semibold">
                     + {row.rawMaterial.length}
                   </Badge>
-                );
+                )
               }
 
-              if (columnKey === "actions") {
+              if (columnKey === 'actions') {
                 return (
                   <div className="flex items-center justify-end gap-2">
                     <Button size="sm">Editar</Button>
@@ -99,29 +99,27 @@ export default function ProductsPage() {
                       Excluir
                     </Button>
                   </div>
-                );
+                )
               }
 
-              return null;
+              return null
             }}
           />
         </Activity>
         <Activity
           mode={
-            data.length === 0 && !productsQuery.isLoading
-              ? "visible"
-              : "hidden"
+            data.length === 0 && !productsQuery.isLoading ? 'visible' : 'hidden'
           }
         >
           <ListingEmptyState message="Nenhum produto encontrado." />
         </Activity>
-        <Activity mode={productsQuery.isLoading ? "visible" : "hidden"}>
+        <Activity mode={productsQuery.isLoading ? 'visible' : 'hidden'}>
           <ListingEmptyState message="Carregando produtos..." />
         </Activity>
-        <Activity mode={productsQuery.isError ? "visible" : "hidden"}>
+        <Activity mode={productsQuery.isError ? 'visible' : 'hidden'}>
           <ListingEmptyState message="Falha ao carregar produtos." />
         </Activity>
       </div>
     </ListingPageLayout>
-  );
+  )
 }

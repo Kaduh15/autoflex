@@ -1,10 +1,10 @@
-import Link from "next/link";
 import {
   FactoryIcon,
   LayoutDashboardIcon,
   PackageIcon,
   TestTubeIcon,
-} from "lucide-react";
+} from 'lucide-react'
+import Link from 'next/link'
 
 export function Sidebar() {
   return (
@@ -29,7 +29,10 @@ export function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link href="/production-suggestions" className="flex gap-2 items-center">
+          <Link
+            href="/production-suggestions"
+            className="flex gap-2 items-center"
+          >
             <FactoryIcon className="size-5" />
             Sugestões de Produção
           </Link>

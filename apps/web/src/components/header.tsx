@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { BoxIcon } from 'lucide-react'
+import Link from 'next/link'
 import { ModeToggle } from './toggle-theme'
 
 export function Header() {

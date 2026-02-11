@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
-import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { SearchIcon } from 'lucide-react'
+import { useState } from 'react'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/input-group";
+} from '@/components/ui/input-group'
 
 type ListingToolbarProps = {
-  searchPlaceholder?: string;
-  resultsText?: string;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-};
+  searchPlaceholder?: string
+  resultsText?: string
+  searchValue?: string
+  onSearchChange?: (value: string) => void
+}
 
 export function ListingToolbar({
-  searchPlaceholder = "Buscar...",
+  searchPlaceholder = 'Buscar...',
   resultsText,
   searchValue,
   onSearchChange,
 }: ListingToolbarProps) {
-  const [internalValue, setInternalValue] = useState("");
-  const value = searchValue ?? internalValue;
+  const [internalValue, setInternalValue] = useState('')
+  const value = searchValue ?? internalValue
 
   return (
     <div className="flex gap-4 items-center">
@@ -31,9 +31,9 @@ export function ListingToolbar({
           placeholder={searchPlaceholder}
           value={value}
           onChange={(event) => {
-            const nextValue = event.target.value;
-            setInternalValue(nextValue);
-            onSearchChange?.(nextValue);
+            const nextValue = event.target.value
+            setInternalValue(nextValue)
+            onSearchChange?.(nextValue)
           }}
         />
         <InputGroupAddon>
@@ -44,5 +44,5 @@ export function ListingToolbar({
         ) : null}
       </InputGroup>
     </div>
-  );
+  )
 }
