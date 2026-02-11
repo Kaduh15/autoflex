@@ -1,24 +1,42 @@
-import { PlusIcon } from 'lucide-react'
-import { Activity } from 'react'
-import { ListingEmptyState } from '@/components/listing/listing-empty-state'
-import { ListingHeader } from '@/components/listing/listing-header'
-import { ListingPageLayout } from '@/components/listing/listing-layout'
-import { ListingTable } from '@/components/listing/listing-table'
-import { ListingToolbar } from '@/components/listing/listing-toolbar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { getProducts } from '@/http/get-products'
-import { formatCurrency } from '@/utils/format-currency'
+"use client";
 
-export default async function ProductsPage() {
-  const { data } = await getProducts()
+import { PlusIcon } from "lucide-react";
+import { Activity, useMemo, useState } from "react";
+import { ListingEmptyState } from "@/components/listing/listing-empty-state";
+import { ListingHeader } from "@/components/listing/listing-header";
+import { ListingPageLayout } from "@/components/listing/listing-layout";
+import { ListingTable } from "@/components/listing/listing-table";
+import { ListingToolbar } from "@/components/listing/listing-toolbar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useProducts } from "@/hooks/products/use-products";
+import { formatCurrency } from "@/utils/format-currency";
+
+export default function ProductsPage() {
+  const [search, setSearch] = useState("");
+  const productsQuery = useProducts();
+  const data = productsQuery.data?.data ?? [];
   const columns = [
-    { key: 'code', label: 'Código' },
-    { key: 'name', label: 'Nome' },
-    { key: 'price', label: 'Valor' },
-    { key: 'rawMaterial', label: 'Matéria-prima' },
-    { key: 'actions', label: 'Ações', align: 'end' as const },
-  ]
+    { key: "code", label: "Código" },
+    { key: "name", label: "Nome" },
+    { key: "price", label: "Valor" },
+    { key: "rawMaterial", label: "Matéria-prima" },
+    { key: "actions", label: "Ações", align: "end" as const },
+  ];
+
+  const filteredData = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+    if (!normalizedSearch) {
+      return data;
+    }
+
+    return data.filter((product) => {
+      return (
+        product.code.toLowerCase().includes(normalizedSearch) ||
+        product.name.toLowerCase().includes(normalizedSearch)
+      );
+    });
+  }, [data, search]);
 
   return (
     <ListingPageLayout>
@@ -33,37 +51,47 @@ export default async function ProductsPage() {
         }
       />
       <div className="flex flex-col gap-8">
-        <ListingToolbar
-          searchPlaceholder="Buscar produtos..."
-          resultsText={`${data.length} resultados`}
-        />
-        <Activity mode={data.length > 0 ? 'visible' : 'hidden'}>
+        <div>
+          <ListingToolbar
+            searchPlaceholder="Buscar produtos..."
+            resultsText={`${filteredData.length} resultados`}
+            searchValue={search}
+            onSearchChange={setSearch}
+          />
+        </div>
+        <Activity
+          mode={
+            filteredData.length > 0 && !productsQuery.isLoading
+              ? "visible"
+              : "hidden"
+          }
+        >
           <ListingTable
             columns={columns}
-            rows={data}
+            rows={filteredData}
             getRowKey={(row) => row.id}
             renderCell={(row, columnKey) => {
-              if (columnKey === 'code') {
-                return <span className="font-medium">{row.code}</span>
+              if (columnKey === "code") {
+                return <span className="font-medium">{row.code}</span>;
               }
 
-              if (columnKey === 'name') {
-                return row.name
+              if (columnKey === "name") {
+                return row.name;
               }
 
-              if (columnKey === 'price') {
-                return formatCurrency(row.price)
+              if (columnKey === "price") {
+                return formatCurrency(row.price);
               }
 
-              if (columnKey === 'rawMaterial') {
+              if (columnKey === "rawMaterial") {
                 return (
                   <Badge className="text-accent font-semibold">
                     + {row.rawMaterial.length}
                   </Badge>
-                )
+                );
               }
 
-              if (columnKey === 'actions') {
+              if (columnKey === "actions") {
                 return (
                   <div className="flex items-center justify-end gap-2">
                     <Button size="sm">Editar</Button>
@@ -71,17 +99,29 @@ export default async function ProductsPage() {
                       Excluir
                     </Button>
                   </div>
-                )
+                );
               }
 
-              return null
+              return null;
             }}
           />
         </Activity>
-        <Activity mode={data.length === 0 ? 'visible' : 'hidden'}>
+        <Activity
+          mode={
+            data.length === 0 && !productsQuery.isLoading
+              ? "visible"
+              : "hidden"
+          }
+        >
           <ListingEmptyState message="Nenhum produto encontrado." />
+        </Activity>
+        <Activity mode={productsQuery.isLoading ? "visible" : "hidden"}>
+          <ListingEmptyState message="Carregando produtos..." />
+        </Activity>
+        <Activity mode={productsQuery.isError ? "visible" : "hidden"}>
+          <ListingEmptyState message="Falha ao carregar produtos." />
         </Activity>
       </div>
     </ListingPageLayout>
-  )
+  );
 }
