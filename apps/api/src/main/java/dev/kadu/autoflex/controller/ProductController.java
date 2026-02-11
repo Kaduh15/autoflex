@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.kadu.autoflex.dto.common.ApiResult;
 import dev.kadu.autoflex.dto.product.ProductRequest;
+import dev.kadu.autoflex.dto.product.ProductResponse;
 import dev.kadu.autoflex.model.Product;
 import dev.kadu.autoflex.service.ProductService;
 
@@ -41,8 +42,8 @@ public class ProductController {
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Lista de produtos retornada com sucesso")
   })
-  public ResponseEntity<ApiResult<List<Product>>> getAll() {
-    return ResponseEntity.ok(new ApiResult<>("OK", productService.getAll()));
+  public ResponseEntity<ApiResult<List<ProductResponse>>> getAll() {
+    return ResponseEntity.ok(new ApiResult<>("OK", productService.getAllWithRawMaterials()));
   }
 
   @GetMapping("{id}")
