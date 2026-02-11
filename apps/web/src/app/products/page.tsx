@@ -1,98 +1,87 @@
-import { PlusIcon, SearchIcon } from "lucide-react";
-import { Activity } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { getProducts } from "@/http/get-products";
-import { formatCurrency } from "@/utils/format-currency";
+import { PlusIcon } from 'lucide-react'
+import { Activity } from 'react'
+import { ListingEmptyState } from '@/components/listing/listing-empty-state'
+import { ListingHeader } from '@/components/listing/listing-header'
+import { ListingPageLayout } from '@/components/listing/listing-layout'
+import { ListingTable } from '@/components/listing/listing-table'
+import { ListingToolbar } from '@/components/listing/listing-toolbar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { getProducts } from '@/http/get-products'
+import { formatCurrency } from '@/utils/format-currency'
 
 export default async function ProductsPage() {
-  const { data } = await getProducts();
+  const { data } = await getProducts()
+  const columns = [
+    { key: 'code', label: 'Código' },
+    { key: 'name', label: 'Nome' },
+    { key: 'price', label: 'Valor' },
+    { key: 'rawMaterial', label: 'Matéria-prima' },
+    { key: 'actions', label: 'Ações', align: 'end' as const },
+  ]
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center gap-2">
-        <div className="flex justify-between items-center gap-4 w-full">
-          <div className="flex flex-col">
-            <h1 className="font-bold text-2xl">Produtos</h1>
-            <p className="text-muted-foreground text-sm">
-              Gerencie produtos e suas listas de materiais
-            </p>
-          </div>
-
+    <ListingPageLayout>
+      <ListingHeader
+        title="Produtos"
+        subtitle="Gerencie produtos e suas listas de materiais"
+        action={
           <Button variant="outline" size="sm">
             <PlusIcon className="size-4" />
             Adicionar Produto
           </Button>
-        </div>
-      </div>
+        }
+      />
       <div className="flex flex-col gap-8">
-        <div className="flex gap-4 items-center">
-          <InputGroup className="max-w-xs">
-            <InputGroupInput placeholder="Search..." />
-            <InputGroupAddon>
-              <SearchIcon />
-            </InputGroupAddon>
-            <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
-          </InputGroup>
-        </div>
+        <ListingToolbar
+          searchPlaceholder="Buscar produtos..."
+          resultsText={`${data.length} resultados`}
+        />
+        <Activity mode={data.length > 0 ? 'visible' : 'hidden'}>
+          <ListingTable
+            columns={columns}
+            rows={data}
+            getRowKey={(row) => row.id}
+            renderCell={(row, columnKey) => {
+              if (columnKey === 'code') {
+                return <span className="font-medium">{row.code}</span>
+              }
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-25">Código</TableHead>
-              <TableHead>Nome</TableHead>
-              <TableHead>Valor</TableHead>
-              <TableHead>Materiais Prima</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <Activity mode={data.length > 0 ? "visible" : "hidden"}>
-            <TableBody>
-              {data.map((product) => {
-                const rawMaterialQuantity = product.rawMaterial.length;
+              if (columnKey === 'name') {
+                return row.name
+              }
 
+              if (columnKey === 'price') {
+                return formatCurrency(row.price)
+              }
+
+              if (columnKey === 'rawMaterial') {
                 return (
-                  <TableRow key={product.id}>
-                    <TableCell className="font-medium">
-                      {product.code}
-                    </TableCell>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{formatCurrency(product.price)}</TableCell>
-                    <TableCell>
-                      <Badge className="text-accent font-semibold">
-                        + {rawMaterialQuantity}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-end">
-                      <Button size="sm">Editar</Button>
-                      <Button size="sm" variant="destructive">
-                        Excluir
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Activity>
-        </Table>
-        <Activity mode={data.length === 0 ? "visible" : "hidden"}>
-          <p className="mx-auto">Nenhum produto encontrado.</p>
+                  <Badge className="text-accent font-semibold">
+                    + {row.rawMaterial.length}
+                  </Badge>
+                )
+              }
+
+              if (columnKey === 'actions') {
+                return (
+                  <div className="flex items-center justify-end gap-2">
+                    <Button size="sm">Editar</Button>
+                    <Button size="sm" variant="destructive">
+                      Excluir
+                    </Button>
+                  </div>
+                )
+              }
+
+              return null
+            }}
+          />
+        </Activity>
+        <Activity mode={data.length === 0 ? 'visible' : 'hidden'}>
+          <ListingEmptyState message="Nenhum produto encontrado." />
         </Activity>
       </div>
-    </div>
-  );
+    </ListingPageLayout>
+  )
 }

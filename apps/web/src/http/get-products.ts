@@ -4,16 +4,20 @@ import { productSchema } from '@/schemas/products'
 
 const responseSchema = z.object({
   message: z.string(),
-  data: productSchema.extend({
-    rawMaterial: z.object({
-      id: z.number(),
-      code: z.string(),
-      name: z.string(),
-      quantityRequired: z.number(),
-      stockQuantity: z.number(),
-    }).array(),
-  }).array(),
-  })
+  data: productSchema
+    .extend({
+      rawMaterial: z
+        .object({
+          id: z.number(),
+          code: z.string(),
+          name: z.string(),
+          quantityRequired: z.number(),
+          stockQuantity: z.number(),
+        })
+        .array(),
+    })
+    .array(),
+})
 
 export async function getProducts() {
   const res = await fetch(`${env.API_URL}/products`)
