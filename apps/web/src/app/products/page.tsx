@@ -1,4 +1,6 @@
 import { PlusIcon, SearchIcon } from "lucide-react";
+import { Activity } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
@@ -14,8 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getProducts } from "@/http/get-products";
+import { formatCurrency } from "@/utils/format-currency";
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const { data } = await getProducts();
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center gap-2">
@@ -42,12 +48,9 @@ export default function ProductsPage() {
             </InputGroupAddon>
             <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
           </InputGroup>
-
-          <Button size="sm">Sem Material</Button>
         </div>
 
         <Table>
-          <TableCaption>A list of your recent invoices.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-25">Código</TableHead>
@@ -57,21 +60,38 @@ export default function ProductsPage() {
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">INV001</TableCell>
-              <TableCell>Mesa</TableCell>
-              <TableCell>R$ 250,00</TableCell>
-              <TableCell>Madeira, Parafusos</TableCell>
-              <TableCell className="text-end">
-                <Button size="sm">Editar</Button>
-                <Button size="sm" variant="destructive">
-                  Excluir
-                </Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
+          <Activity mode={data.length > 0 ? "visible" : "hidden"}>
+            <TableBody>
+              {data.map((product) => {
+                const rawMaterialQuantity = product.rawMaterial.length;
+
+                return (
+                  <TableRow key={product.id}>
+                    <TableCell className="font-medium">
+                      {product.code}
+                    </TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{formatCurrency(product.price)}</TableCell>
+                    <TableCell>
+                      <Badge className="text-accent font-semibold">
+                        + {rawMaterialQuantity}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-end">
+                      <Button size="sm">Editar</Button>
+                      <Button size="sm" variant="destructive">
+                        Excluir
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Activity>
         </Table>
+        <Activity mode={data.length === 0 ? "visible" : "hidden"}>
+          <p className="mx-auto">Nenhum produto encontrado.</p>
+        </Activity>
       </div>
     </div>
   );

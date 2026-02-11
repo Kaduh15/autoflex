@@ -22,6 +22,12 @@ export function Sidebar() {
             Materia Prima
           </a>
         </li>
+        <li>
+          <a href="/production-suggestions" className="flex gap-2 items-center">
+            <LayersIcon className="size-5" />
+            Sugestões de Produção
+          </a>
+        </li>
       </ul>
     </div>
   )
