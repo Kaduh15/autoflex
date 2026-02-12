@@ -1,5 +1,10 @@
 # AutoFlex
 
+![Status](https://img.shields.io/badge/status-active-success)
+![Node](https://img.shields.io/badge/node-20.x-339933)
+![Java](https://img.shields.io/badge/java-17-007396)
+![Docker](https://img.shields.io/badge/docker-ready-2496ED)
+
 Monorepo com API (Spring Boot) e frontend (Next.js) para controle de produtos,
 matérias-primas e sugestões de produção.
 
@@ -21,6 +26,14 @@ de maior valor.
 - **Matéria-prima**: código, nome, quantidade em estoque.
 - **LOM (Lista de Materiais)**: associação entre produto e matérias-primas
   com a quantidade necessária para produzir 1 unidade.
+
+## Fluxo principal (exemplo)
+
+1. Cadastre matérias-primas com estoque inicial.
+2. Cadastre produtos.
+3. Associe matérias-primas aos produtos (LOM).
+4. Consulte `GET /production/suggestion` para obter o plano de produção
+   priorizado por valor.
 
 ## Lógica de sugestão de produção
 
@@ -94,12 +107,6 @@ docker compose --profile dev up --build
 docker compose --profile prod up --build
 ```
 
-## Endpoints úteis
-
-- API: `http://localhost:8080`
-- Swagger UI: `http://localhost:8080/swagger`
-- Web: `http://localhost:3000`
-
 ## Deploy
 
 O projeto foi publicado em uma VPS própria para testes:
@@ -108,3 +115,37 @@ O projeto foi publicado em uma VPS própria para testes:
 - API: `https://api.autoflex.lebdev.me/`
 
 Como é uma estrutura de teste, esses endereços podem ficar indisponíveis.
+
+## Endpoints úteis
+
+- API: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger`
+- Web: `http://localhost:3000`
+
+## Rotas principais da API
+
+Produtos
+
+- `GET /products`
+- `POST /products`
+- `GET /products/{id}`
+- `PUT /products/{id}`
+- `DELETE /products/{id}`
+
+Matérias-primas
+
+- `GET /raw-materials`
+- `POST /raw-materials`
+- `GET /raw-materials/{id}`
+- `PUT /raw-materials/{id}`
+- `DELETE /raw-materials/{id}`
+
+Lista de materiais (LOM)
+
+- `GET /products/{id}/lom`
+- `POST /products/{id}/lom/items`
+- `DELETE /products/{id}/lom/items/{rawMaterialId}`
+
+Sugestões de produção
+
+- `GET /production/suggestion`
