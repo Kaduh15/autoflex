@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const productionSuggestionItemSchema = z.object({
   productId: z.number(),
@@ -7,9 +7,9 @@ export const productionSuggestionItemSchema = z.object({
   price: z.number(),
   maxQuantity: z.number(),
   totalValue: z.number(),
-});
+})
 
 export const productionSuggestDataSchema = z.object({
   suggestions: z.array(productionSuggestionItemSchema),
   totalProductionValue: z.number(),
-});
+})

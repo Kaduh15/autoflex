@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { FactoryIcon, PackageIcon, TestTubeIcon } from "lucide-react";
+import { FactoryIcon, PackageIcon, TestTubeIcon } from 'lucide-react'
+import Link from 'next/link'
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -12,76 +12,75 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useProducts } from "@/hooks/products/use-products";
-import { useProductionSuggestions } from "@/hooks/production/use-production-suggestions";
-import { useRawMaterials } from "@/hooks/raw-materials/use-raw-materials";
-import { formatCurrency } from "@/utils/format-currency";
+} from '@/components/ui/card'
+import { useProductionSuggestions } from '@/hooks/production/use-production-suggestions'
+import { useProducts } from '@/hooks/products/use-products'
+import { useRawMaterials } from '@/hooks/raw-materials/use-raw-materials'
+import { formatCurrency } from '@/utils/format-currency'
 
 export default function HomePage() {
-  const productsQuery = useProducts();
-  const rawMaterialsQuery = useRawMaterials();
-  const suggestionsQuery = useProductionSuggestions();
+  const productsQuery = useProducts()
+  const rawMaterialsQuery = useRawMaterials()
+  const suggestionsQuery = useProductionSuggestions()
 
-  const productsCount = productsQuery.data?.data.length ?? 0;
-  const rawMaterialsCount = rawMaterialsQuery.data?.data.length ?? 0;
-  const suggestionsCount =
-    suggestionsQuery.data?.data.suggestions.length ?? 0;
-  const suggestionsTotal = suggestionsQuery.data?.data.totalProductionValue;
+  const productsCount = productsQuery.data?.data.length ?? 0
+  const rawMaterialsCount = rawMaterialsQuery.data?.data.length ?? 0
+  const suggestionsCount = suggestionsQuery.data?.data.suggestions.length ?? 0
+  const suggestionsTotal = suggestionsQuery.data?.data.totalProductionValue
 
   const quickLinks = [
     {
-      title: "Produtos",
-      description: "Cadastre e organize seus produtos e listas de materiais.",
-      href: "/products",
+      title: 'Produtos',
+      description: 'Cadastre e organize seus produtos e listas de materiais.',
+      href: '/products',
       icon: PackageIcon,
-      action: "Ver produtos",
-      metricLabel: "Produtos",
+      action: 'Ver produtos',
+      metricLabel: 'Produtos',
       metricValue: productsQuery.isLoading
-        ? "Carregando..."
+        ? 'Carregando...'
         : productsQuery.isError
-          ? "Erro"
+          ? 'Erro'
           : `${productsCount}`,
-      metricHint: "cadastrados",
+      metricHint: 'cadastrados',
     },
     {
-      title: "Matéria-prima",
-      description: "Controle de estoque e cadastro de insumos.",
-      href: "/raw-materials",
+      title: 'Matéria-prima',
+      description: 'Controle de estoque e cadastro de insumos.',
+      href: '/raw-materials',
       icon: TestTubeIcon,
-      action: "Ver matérias-primas",
-      metricLabel: "Matérias-primas",
+      action: 'Ver matérias-primas',
+      metricLabel: 'Matérias-primas',
       metricValue: rawMaterialsQuery.isLoading
-        ? "Carregando..."
+        ? 'Carregando...'
         : rawMaterialsQuery.isError
-          ? "Erro"
+          ? 'Erro'
           : `${rawMaterialsCount}`,
-      metricHint: "em estoque",
+      metricHint: 'em estoque',
     },
     {
-      title: "Sugestões de produção",
-      description: "Veja o que produzir com base no estoque atual.",
-      href: "/production-suggestions",
+      title: 'Sugestões de produção',
+      description: 'Veja o que produzir com base no estoque atual.',
+      href: '/production-suggestions',
       icon: FactoryIcon,
-      action: "Ver sugestões",
-      metricLabel: "Valor total",
+      action: 'Ver sugestões',
+      metricLabel: 'Valor total',
       metricValue: suggestionsQuery.isLoading
-        ? "Carregando..."
+        ? 'Carregando...'
         : suggestionsQuery.isError
-          ? "Erro"
+          ? 'Erro'
           : suggestionsTotal !== undefined
             ? formatCurrency(suggestionsTotal)
-            : "-",
+            : '-',
       metricHint: `${suggestionsCount} sugestões`,
     },
-  ];
+  ]
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold">Painel geral</h1>
         <p className="text-sm text-muted-foreground">
-          Acesse rapidamente os principais módulos do Autoflex.
+          Resumo das operações e atalhos principais.
         </p>
       </div>
 
@@ -113,5 +112,5 @@ export default function HomePage() {
         ))}
       </div>
     </div>
-  );
+  )
 }

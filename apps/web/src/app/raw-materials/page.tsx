@@ -41,7 +41,7 @@ export default function RawMaterialsPage() {
     <ListingPageLayout>
       <ListingHeader
         title="Matéria-prima"
-        subtitle="Gerencie o estoque de matérias-primas"
+        subtitle="Controle de estoque e cadastro de insumos."
         action={
           <Button asChild variant="outline" size="sm">
             <Link href="/raw-materials/create">

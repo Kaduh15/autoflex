@@ -43,7 +43,7 @@ export default function ProductsPage() {
     <ListingPageLayout>
       <ListingHeader
         title="Produtos"
-        subtitle="Gerencie produtos e suas listas de materiais"
+        subtitle="Gerencie produtos e suas listas de materiais."
         action={
           <Button asChild variant="outline" size="sm">
             <Link href="/products/create">
