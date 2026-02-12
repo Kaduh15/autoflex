@@ -99,3 +99,12 @@ docker compose --profile prod up --build
 - API: `http://localhost:8080`
 - Swagger UI: `http://localhost:8080/swagger`
 - Web: `http://localhost:3000`
+
+## Deploy
+
+O projeto foi publicado em uma VPS própria para testes:
+
+- Web: `https://autoflex.lebdev.me/`
+- API: `https://api.autoflex.lebdev.me/`
+
+Como é uma estrutura de teste, esses endereços podem ficar indisponíveis.
