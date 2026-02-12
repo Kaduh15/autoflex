@@ -13,7 +13,7 @@ export function Sidebar() {
         <li>
           <Link href="/" className="flex gap-2 items-center">
             <LayoutDashboardIcon className="size-5" />
-            Dashboard
+            Painel
           </Link>
         </li>
         <li>
@@ -25,7 +25,7 @@ export function Sidebar() {
         <li>
           <Link href="/raw-materials" className="flex gap-2 items-center">
             <TestTubeIcon className="size-5" />
-            Materia Prima
+            Matéria-prima
           </Link>
         </li>
         <li>
@@ -34,7 +34,7 @@ export function Sidebar() {
             className="flex gap-2 items-center"
           >
             <FactoryIcon className="size-5" />
-            Sugestões de Produção
+            Sugestões de produção
           </Link>
         </li>
       </ul>
