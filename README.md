@@ -53,6 +53,10 @@ Exemplos prontos:
 - `apps/api/.env.example`
 - `apps/web/.env.example`
 
+Variáveis importantes:
+
+- `CORS_ALLOWED_ORIGINS`: lista de origens permitidas (separadas por vírgula).
+
 ## Desenvolvimento local
 
 ### Banco de dados
