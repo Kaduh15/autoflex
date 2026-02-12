@@ -88,7 +88,7 @@ export default function ProductionSuggestionsPage() {
               : "hidden"
           }
         >
-          <ListingEmptyState message="Nenhuma sugestão disponível." />
+          <ListingEmptyState message="Sem sugestões no momento. Cadastre produtos e matérias-primas para gerar resultados." />
         </Activity>
 
         <Activity mode={suggestionsQuery.isLoading ? "visible" : "hidden"}>
