@@ -3,25 +3,40 @@
 Monorepo com API (Spring Boot) e frontend (Next.js) para controle de produtos,
 matérias-primas e sugestões de produção.
 
-## Contexto do teste
+## Contexto
 
-Projeto desenvolvido como resposta ao **Teste Prático - Autoflex**.
 O sistema controla produtos, matérias-primas e a associação entre eles,
 permitindo sugerir a produção com base no estoque e priorizando produtos
 de maior valor.
-
-Requisitos atendidos (resumo):
-
-- CRUD de produtos e matérias-primas.
-- Associação de matérias-primas aos produtos com quantidades.
-- Sugestões de produção com valor total.
-- Arquitetura separando API e frontend.
 
 ## Estrutura
 
 - `apps/api/` - API Spring Boot
 - `apps/web/` - Frontend Next.js
 - `compose.yaml` - Postgres + serviços app (com perfis)
+
+## Visão geral do domínio
+
+- **Produto**: código, nome, valor.
+- **Matéria-prima**: código, nome, quantidade em estoque.
+- **LOM (Lista de Materiais)**: associação entre produto e matérias-primas
+  com a quantidade necessária para produzir 1 unidade.
+
+## Lógica de sugestão de produção
+
+O endpoint `GET /production/suggestion` retorna quais produtos podem ser
+produzidos com o estoque atual, priorizando os de maior valor. A lógica
+esperada é:
+
+1. Ordenar produtos por **valor desc** (maior valor primeiro).
+2. Para cada produto, calcular a **quantidade máxima** possível com o
+   estoque disponível:
+   - Para cada matéria-prima do produto, calcular
+     `floor(estoque / quantidadeNecessaria)`.
+   - A quantidade do produto é o **mínimo** desses valores.
+3. Deduzir do estoque as matérias-primas consumidas pelo produto.
+4. Somar o **valor total**: `quantidade * valor do produto`.
+5. Retornar a lista de sugestões com `maxQuantity` e `totalValue`.
 
 ## Requisitos
 
