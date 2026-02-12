@@ -85,7 +85,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {quickLinks.map((item) => (
           <Card key={item.title} className="flex flex-col">
             <CardHeader className="gap-1">

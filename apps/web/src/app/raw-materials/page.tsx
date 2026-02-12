@@ -88,7 +88,7 @@ export default function RawMaterialsPage() {
 
               if (columnKey === 'actions') {
                 return (
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
                     <Button size="sm">Editar</Button>
                     <Button size="sm" variant="destructive">
                       Excluir

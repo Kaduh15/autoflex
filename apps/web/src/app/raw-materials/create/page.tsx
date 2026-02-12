@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -33,13 +34,18 @@ export default function RawMaterialsCreatePage() {
   })
 
   const onSubmit = async (values: CreateRawMaterialFormValues) => {
-    await mutation.mutateAsync(values)
-    router.push('/raw-materials')
+    try {
+      await mutation.mutateAsync(values)
+      toast.success('Matéria-prima cadastrada com sucesso')
+      router.push('/raw-materials')
+    } catch {
+      toast.error('Falha ao cadastrar matéria-prima')
+    }
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Cadastrar matéria-prima</h1>
           <p className="text-sm text-muted-foreground">
@@ -53,7 +59,7 @@ export default function RawMaterialsCreatePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <FormField
               control={form.control}
               name="code"
@@ -95,7 +101,7 @@ export default function RawMaterialsCreatePage() {
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? 'Salvando...' : 'Cadastrar'}
             </Button>

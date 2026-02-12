@@ -30,7 +30,7 @@ export default function ProductionSuggestionsPage() {
       />
 
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="rounded-md border px-4 py-3">
             <p className="text-xs uppercase text-muted-foreground">
               Valor total sugerido
@@ -39,7 +39,7 @@ export default function ProductionSuggestionsPage() {
               {data ? formatCurrency(data.totalProductionValue) : "-"}
             </p>
           </div>
-          <Badge className="text-accent font-semibold">
+          <Badge className="w-fit text-accent font-semibold">
             {suggestions.length} sugestões
           </Badge>
         </div>

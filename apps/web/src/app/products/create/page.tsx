@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useFieldArray, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -53,13 +54,18 @@ export default function ProductsCreatePage() {
   })
 
   const onSubmit = async (values: CreateProductFormValues) => {
-    await mutation.mutateAsync(values)
-    router.push('/products')
+    try {
+      await mutation.mutateAsync(values)
+      toast.success('Produto cadastrado com sucesso')
+      router.push('/products')
+    } catch {
+      toast.error('Falha ao cadastrar produto')
+    }
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Cadastrar produto</h1>
           <p className="text-sm text-muted-foreground">
@@ -73,7 +79,7 @@ export default function ProductsCreatePage() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6"
         >
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <FormField
               control={form.control}
               name="code"
@@ -116,7 +122,7 @@ export default function ProductsCreatePage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg font-semibold">Matérias-primas</h2>
               <Button
                 type="button"
@@ -139,7 +145,7 @@ export default function ProductsCreatePage() {
               {fields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="grid gap-4 md:grid-cols-[1fr_1fr_auto] items-end"
+                  className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] items-end"
                 >
                   <FormField
                     control={form.control}
@@ -209,6 +215,7 @@ export default function ProductsCreatePage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => remove(index)}
+                    className="sm:self-end"
                   >
                     <Trash2Icon className="size-4" />
                   </Button>
@@ -217,7 +224,7 @@ export default function ProductsCreatePage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? 'Salvando...' : 'Cadastrar'}
             </Button>

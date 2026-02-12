@@ -1,6 +1,7 @@
 'use client'
 
 import { PlusIcon } from 'lucide-react'
+import Link from 'next/link'
 import { Activity, useMemo, useState } from 'react'
 import { ListingEmptyState } from '@/components/listing/listing-empty-state'
 import { ListingHeader } from '@/components/listing/listing-header'
@@ -44,9 +45,11 @@ export default function ProductsPage() {
         title="Produtos"
         subtitle="Gerencie produtos e suas listas de materiais"
         action={
-          <Button variant="outline" size="sm">
-            <PlusIcon className="size-4" />
-            Adicionar Produto
+          <Button asChild variant="outline" size="sm">
+            <Link href="/products/create">
+              <PlusIcon className="size-4" />
+              Adicionar Produto
+            </Link>
           </Button>
         }
       />
@@ -93,7 +96,7 @@ export default function ProductsPage() {
 
               if (columnKey === 'actions') {
                 return (
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
                     <Button size="sm">Editar</Button>
                     <Button size="sm" variant="destructive">
                       Excluir

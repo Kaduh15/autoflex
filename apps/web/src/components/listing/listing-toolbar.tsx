@@ -25,8 +25,8 @@ export function ListingToolbar({
   const value = searchValue ?? internalValue
 
   return (
-    <div className="flex gap-4 items-center">
-      <InputGroup className="max-w-xs">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <InputGroup className="w-full sm:max-w-xs">
         <InputGroupInput
           placeholder={searchPlaceholder}
           value={value}
